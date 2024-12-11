@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta http-equiv="refresh" content="300">
+		<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js" integrity="sha512-KZmyTq3PLx9EZl0RHShHQuXtrvdJ+m35tuOiwlcZfs/rE7NZv29ygNA8SFCkMXTnYZQK2OX0Gm2qKGfvWEtRXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+		<title>Login/Signup</title>
+	</head>
+	<body ng-app="app" ng-controller="ctrl">
+		<div class="w3-bar w3-red w3-padding w3-container">
+			<h3>BALANDACA & FERNANDEZ</h3>
+		</div>
+		<div class="w3-container w3-padding w3-margin-bottom">
+			<div class="w3-bar">
+				<!-- Search bar that calls filterAccounts() function -->
+				<input
+					type="text"
+					class="w3-bar-item w3-input w3-border"
+					placeholder="Search accounts by email..."
+					ng-model="searchEmail"
+					ng-change="filterAccounts()"
+				/>
+				<button class="w3-bar-item w3-button w3-white w3-border">
+					<i class="fa fa-search"></i>
+				</button>
+			</div>
+		</div>
+		<div class="w3-container w3-padding">
+			<table class="w3-table-all">
+				<tr>
+					<th style="text-align: center; border: 1px solid gray;">IMAGE</th>
+					<th style="text-align: center; border: 1px solid gray;">EMAIL</th>
+					<th style="text-align: center; border: 1px solid gray;">PASSWORD</th>
+				</tr>
+				<tr ng-repeat="user in filteredAccounts">
+					<td style="text-align: center; border: 1px solid gray;">
+						<img 
+							ng-src="{{ user.imageUrl }}" 
+							alt="Profile Image" 
+							style="width: 50px; height: 50px; border-radius: 50%;" 
+						/>
+					</td>
+					<td style="text-align: center; border: 1px solid gray;">{{ user.email }}</td>
+					<td style="text-align: center; border: 1px solid gray;">{{ user.password }}</td>
+				</tr>
+			</table>
+		</div>
+		<script>
+			// Define AngularJS app and controller
+			var app = angular.module("app", []);
+			app.controller("ctrl", function($http, $scope) {
+				$scope.accounts = []; // Store all accounts
+				$scope.filteredAccounts = []; // Store filtered accounts
+
+				function removeDuplicates(accounts) {
+					const seen = new Set();
+					return accounts.filter(account => {
+						const email = account.email.trim().toLowerCase(); // Normalize email (remove whitespace and lowercase)
+						if (seen.has(email)) {
+							return false; // Skip duplicates
+						}
+						seen.add(email);
+						return true;
+					});
+				}
+
+				// Fetch accounts data from the server
+				$http({
+					method: 'GET',
+					url: 'http://192.168.160.50:5000/accounts'
+				}).then(function(response) {
+					$scope.accounts = removeDuplicates(response.data);
+					$scope.filteredAccounts = response.data; // Initialize filteredAccounts
+				}, function(error) {
+					console.error("Error fetching accounts:", error);
+					$scope.accounts = [];
+					$scope.filteredAccounts = [];
+				});
+
+				// Function to filter accounts based on searchEmail
+				$scope.filterAccounts = function() {
+					const search = $scope.searchEmail ? $scope.searchEmail.toLowerCase() : '';
+					$scope.filteredAccounts = $scope.accounts.filter(user =>
+						user.email.toLowerCase().includes(search)
+					);
+				};
+			});
+		</script>
+	</body>
+</html>

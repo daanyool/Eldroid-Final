@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf=8">
+		<meta name="viewport" content="width:device-width,initial-scale=1.0">
+		<meta http-equiv="refresh" content="3">
+		<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js" integrity="sha512-KZmyTq3PLx9EZl0RHShHQuXtrvdJ+m35tuOiwlcZfs/rE7NZv29ygNA8SFCkMXTnYZQK2OX0Gm2qKGfvWEtRXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+		<title>Chat App v1.0</title>
+	</head>
+	<body>
+		<div class="w3-bar w3-blue w3-padding w3-container">
+			<h3>You Chat App</h3>
+		</div>
+		<div class="w3-container w3-padding" ng-app="app" ng-controller="ctrl">
+			<table class="w3-table-all">
+				<tr>
+					<th>Messages</th>
+				</tr>
+				<tr ng-repeat="m in messages">
+				</tr>
+			</table>
+		</div>
+		<script>
+			var app = angular.module("app",[]);
+			app.controller("ctrl",function($htpp,$scope){
+				$http({
+					'method':'GET',
+					'url':'/studenlist'
+				}).then(function(response){
+					$scope.message = response.data;
+				});
+			});
+		</script>
+	</body>
+</html>
